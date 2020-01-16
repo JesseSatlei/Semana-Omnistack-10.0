@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const routes = require('./routes');
 
 const app = express();
@@ -9,6 +10,7 @@ mongoose.connect('mongodb+srv://rocketCurso:ZJWqI11W74Lrhq2Q@cluster0-g3deh.mong
     useUnifiedTopology: true,
 });
 // week10 é o nome da base de dados
+app.use(cors());
 app.use(express.json()); // com essa linha ele entende requisições no formato JSON
 app.use(routes);
 //Métoddos HTTP: get (buscar), post(adicionar), put(atualizar), delete(remover)
