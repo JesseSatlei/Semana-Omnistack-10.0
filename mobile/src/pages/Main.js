@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Image, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
+import { StyleSheet, Image, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { requestPermissionsAsync, getCurrentPositionAsync } from 'expo-location';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -10,6 +10,7 @@ function Main({ navigation }) {
   const [devs, setDevs] = useState([]);
   //Sempre é guardado um valor que é retornado da API em algum estado
   const [currentRegion, setCurrentRegion] = useState(null);
+  const [techs, setTechs]  = useState('');
 
   useEffect(() => {
     async function loadInitialPosition() {
@@ -21,6 +22,7 @@ function Main({ navigation }) {
         });
 
         const { latitude, longitude } = coords;
+
         setCurrentRegion({
           latitude,
           longitude,
@@ -38,12 +40,11 @@ function Main({ navigation }) {
 
     const response = await api.get('/search', {
       params: {
-        latitude,
         longitude,
-        techs: 'ReactJS'
+        latitude,
+        techs
       }
     });
-
     setDevs(response.data.devs);
   }
 
@@ -66,8 +67,8 @@ function Main({ navigation }) {
           <Marker
             key={dev._id}
             coordinate={{
-              longitude: devs.location.coordinates[0],
-              latitude: devs.location.coordinates[1]
+              longitude: dev.location.coordinates[0],
+              latitude: dev.location.coordinates[1]
             }}
           >
             <Image
@@ -90,10 +91,12 @@ function Main({ navigation }) {
       <View style={styles.searchForm}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Duscar devs por techs..."
+          placeholder="Buscar devs por techs..."
           placeholderTextColor="#999"
           autoCapitalize="words"
           autoCorrect={false}
+          value={techs}
+          onChangeText={setTechs}
         />
         <TouchableOpacity onPress={loadDevs} style={styles.loadButton}>
           <MaterialIcons name="my-location" size={20} color="#FFF" />
